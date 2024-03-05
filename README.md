@@ -9,7 +9,7 @@ In this example, you will learn how to run EventStoreDB in docker, how to establ
 
 ## 02 Concurrency (chapter-1)
 
-In this example, you will learn how to guard business rules with optimistic concurrency. You will also learn some typical approaches for read-models.
+In this example, you will learn how to guard business rules with optimistic concurrency. You will also learn some typical approaches for aggregates and read-models.
 
 * [DotNet](./src/dotnet/02-concurrency/README.md)
 
@@ -21,7 +21,7 @@ In this example, you will learn how to combine many events (by-event-type) into 
 
 ## 04 Read Models Recreate (chapter-1)
 
-In this example, you will learn how to recreate a read-model, without affecting the previous. 
+In this example, you will learn how to recreate a read-model, without affecting the previous. Also you will learn how to deal with uniqueness.
 
 * [DotNet](./src/dotnet/04-read-models/README.md)
 
