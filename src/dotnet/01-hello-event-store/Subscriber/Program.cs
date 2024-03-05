@@ -9,6 +9,12 @@ namespace Subscriber
     {
         static async Task Main(string[] args)
         {
+            if (args.Length == 0)
+            {
+                Console.Error.WriteLine("Expected topic name.");
+                return;
+            }
+
             var topicId = args[0].ToGuid();
             var client = CreateClient();
             await using var events = client.SubscribeToStream($"Thread-{topicId}", FromStream.End, true);

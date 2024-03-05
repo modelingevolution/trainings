@@ -11,6 +11,11 @@ namespace Send
     {
         static async Task Main(string[] args)
         {
+            if (args.Length == 0)
+            {
+                Console.Error.WriteLine("Expected topic name.");
+                return;
+            }    
             var topicId = args[0].ToGuid();
             string line = "";
 
