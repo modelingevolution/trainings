@@ -4,8 +4,8 @@
 
 In this example you will learn how to run EventStoreDB in docker, how to establish a connection to it. How to append and subscribe to events.
 
-* [DotNet](./src/dotnet/README.md)
-* [Node.JS](./src/nodejs/README.md)
+* [DotNet](./src/dotnet/01-hello-event-store/README.md)
+* [Node.JS](./src/nodejs/01-hello-event-store/README.md)
 
 ## 02 Concurrency (chapter-1)
 

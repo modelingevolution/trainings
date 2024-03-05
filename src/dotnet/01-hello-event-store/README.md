@@ -2,7 +2,7 @@
 
 
 ## 01-hello-event-store
-Sample app that sends and receives messages.
+Sample app that appends messages and receives messages.
 
 To run the app:
 ```bash
