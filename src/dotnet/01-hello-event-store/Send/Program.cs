@@ -1,14 +1,11 @@
 ﻿using EventStore.Client;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
+using Contracts;
 
 namespace Send
 {
-    class MessageSent
-    {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public required string Text { get; set; }
-    }
+
 
     internal class Program
     {
