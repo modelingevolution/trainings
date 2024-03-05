@@ -32,7 +32,7 @@ cd /workspaces/trainings/src/nodejs/01-hello-event-store
 docker-compose down
 ```
 
-### TODO:
+### Exercises:
 
 Modify the app:
 1) Add Created field in event's metadata.
