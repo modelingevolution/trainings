@@ -1,4 +1,4 @@
-﻿namespace TrainTicketReservation;
+﻿namespace TrainTicketReservation.Infrastructure;
 
 public interface ICommandHandle<in TCommand>
 {

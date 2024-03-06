@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace TrainTicketReservation;
+namespace TrainTicketReservation.Infrastructure;
 
 public static class ExtensionMethods
 {

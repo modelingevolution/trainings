@@ -1,5 +1,8 @@
 using System.Data;
 using FluentAssertions;
+using TrainTicketReservation.Infrastructure;
+using TrainTicketReservation.Reservation.App;
+using TrainTicketReservation.Reservation.Logic;
 
 namespace TrainTicketReservation.Tests
 {

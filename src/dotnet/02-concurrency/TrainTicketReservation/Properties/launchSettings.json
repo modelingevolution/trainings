@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TrainTicketReservation": {
+      "commandName": "Project",
+      "commandLineArgs": "stats -i"
+    }
+  }
+}
