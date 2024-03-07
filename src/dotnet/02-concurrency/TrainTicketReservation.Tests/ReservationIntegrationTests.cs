@@ -10,19 +10,19 @@ namespace TrainTicketReservation.Tests
     public class ReservationIntegrationTests : IDisposable, IAsyncDisposable
     {
         private string TrainReservationNo = "Train_01" + DateTime.Now.ToString();
-        private readonly App _instance = new();
+        private readonly App _app = new();
 
 
         [Fact]
         public async Task MakingReservationForUnavailableSeats_Throws_SeatsUnavailable()
         {
             var id = TrainReservationNo.ToGuid();
-            await _instance.CreateReservationCommandHandler().Handle(id, new OpenReservation(TrainReservationNo, 2,1));
-            await _instance.CreateReservationCommandHandler().Handle(id, new MakeReservation(1, 0));
-            await _instance.CreateReservationCommandHandler().Handle(id, new MakeReservation(1, 1));
+            await _app.CreateReservationCommandHandler().Handle(id, new OpenReservation(TrainReservationNo, 2,1));
+            await _app.CreateReservationCommandHandler().Handle(id, new MakeReservation(1, 0));
+            await _app.CreateReservationCommandHandler().Handle(id, new MakeReservation(1, 1));
 
 
-            Func<Task> action = async () => await _instance.CreateReservationCommandHandler().Handle(id, new MakeReservation(1, 0));
+            Func<Task> action = async () => await _app.CreateReservationCommandHandler().Handle(id, new MakeReservation(1, 0));
             
             await action.Should().ThrowAsync<SeatsUnavailable>();
         }
@@ -32,7 +32,7 @@ namespace TrainTicketReservation.Tests
         {
             var id = TrainReservationNo.ToGuid();
 
-            await _instance.CreateReservationCommandHandler().Handle(id, new OpenReservation(TrainReservationNo, 2000, 2000));
+            await _app.CreateReservationCommandHandler().Handle(id, new OpenReservation(TrainReservationNo, 2000, 2000));
 
             // Let's spin 2 threads that want to make some reservations. Let's simulate little delay, so that we'd give a chance to finish processing in parallel some amount of items.
             async Task Reserve()
@@ -54,12 +54,12 @@ namespace TrainTicketReservation.Tests
 
         public void Dispose()
         {
-            _instance.Dispose();
+            _app.Dispose();
         }
 
         public async ValueTask DisposeAsync()
         {
-            await _instance.DisposeAsync();
+            await _app.DisposeAsync();
         }
     }
 }
