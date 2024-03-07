@@ -14,7 +14,7 @@ namespace TrainTicketReservation.Tests
 
 
         [Fact]
-        public async Task SeatsUnavailable()
+        public async Task MakingReservationForUnavailableSeats_Throws_SeatsUnavailable()
         {
             var id = TrainReservationNo.ToGuid();
             await _instance.CreateReservationCommandHandler().Handle(id, new OpenReservation(TrainReservationNo, 2,1));
@@ -28,7 +28,7 @@ namespace TrainTicketReservation.Tests
         }
 
         [Fact]
-        public async Task CheckingOptimisticConcurrency()
+        public async Task ConcurrentCommandHandlerInvocation_Throws_WrongExpectedVersionException()
         {
             var id = TrainReservationNo.ToGuid();
 
