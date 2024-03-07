@@ -2,9 +2,14 @@
 
 
 ## 02-Concurrency
-Yet another simple ticket reservation system.
+Yet another simple console-app ticket reservation system. The app focuses pureply on EventStore and minimal usage of it's APIs. 
+IoC integration, aspects injections, REST API, GRPC or UI are purposely omitted. 
 
 To run the app:
+
+1) You can run integration tests.
+2) You can launch the app with some arguments
+
 ```bash
 cd src/dotnet/01-hello-event-store
 docker-compose up -d
@@ -15,6 +20,7 @@ In one terminal:
 # Go to Train Ticket Reservation:
 cd /workspaces/trainings/src/dotnet/02-concurrent/TrainTicketReservation
 dotnet run open cool_reservation_01 3 2
+dotnet run stats
 ```
 
 In another terminal:

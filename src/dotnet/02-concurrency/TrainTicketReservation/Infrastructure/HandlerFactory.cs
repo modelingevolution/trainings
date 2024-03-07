@@ -4,20 +4,25 @@ using TrainTicketReservation.Reservation.Views.StatView;
 
 namespace TrainTicketReservation.Infrastructure;
 
-public static class HandlerFactory
+public class App : IDisposable, IAsyncDisposable
 {
-    public static ReservationCommandHandler CreateReservationCommandHandler()
-    {
-        var client = CreateClient();
+    private EventStoreClient _client;
+    private static App _instance;
 
-        return new ReservationCommandHandler(client);
+    public static App Instance => _instance ??= new App();
+
+    public ReservationCommandHandler CreateReservationCommandHandler()
+    {
+        _client ??= CreateClient();
+
+        return new ReservationCommandHandler(_client);
     }
 
-    public static ReservationStatsProjection CreateReservationStatsEventHandler()
+    public ReservationStatsProjection CreateReservationStatsEventHandler()
     {
-        var client = CreateClient();
+        _client ??= CreateClient();
 
-        return new ReservationStatsProjection(client);
+        return new ReservationStatsProjection(_client);
     }
 
     private static EventStoreClient CreateClient()
@@ -28,5 +33,15 @@ public static class HandlerFactory
 
         var client = new EventStoreClient(settings);
         return client;
+    }
+
+    public void Dispose()
+    {
+        _client.Dispose();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _client.DisposeAsync();
     }
 }
