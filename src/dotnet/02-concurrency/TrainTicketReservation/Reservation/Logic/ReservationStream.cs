@@ -26,7 +26,7 @@ public class ReservationStream(EventStoreClient client)
    public IAsyncEnumerable<IEvent> ReadEvents_Reflection(Guid id)
    {
        var items = client.ReadStreamAsync(Direction.Forwards, $"Reservation-{id}", StreamPosition.Start);
-       var events = items.Select(ev => JsonSerializer.Deserialize(ev.Event.Data.Span, _register[ev.Event.EventType]) as IEvent);
+       var events = items.Select(ev => (IEvent)JsonSerializer.Deserialize(ev.Event.Data.Span, _register[ev.Event.EventType])!);
        return events;
    }
 
