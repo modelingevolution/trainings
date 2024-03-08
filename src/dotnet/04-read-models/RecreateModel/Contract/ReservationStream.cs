@@ -2,19 +2,20 @@
 using EventStore.Client;
 using TrainTicketReservation.Infrastructure;
 
-namespace TrainTicketReservation.Reservation.Logic;
+namespace RecreateModel.Contract;
 
 public class ReservationStream(EventStoreClient client)
 {
-   public IAsyncEnumerable<IEvent> ReadEvents(Guid id)
+   
+    public IAsyncEnumerable<IEvent> ReadEvents(Guid id)
     {
         var items = client.ReadStreamAsync(Direction.Forwards, $"Reservation-{id}", StreamPosition.Start);
-        IAsyncEnumerable<IEvent> events = items.Select(ev => ev.Event.EventType switch
+        var events = items.Select(ev => ev.Event.EventType switch
         {
             nameof(ReservationMade) => JsonSerializer.Deserialize<ReservationMade>(ev.Event.Data.Span),
-            nameof(ReservationOpened) => (IEvent)JsonSerializer.Deserialize<ReservationOpened>(ev.Event.Data.Span)!,
+            nameof(ReservationOpened) => (IEvent)JsonSerializer.Deserialize<ReservationOpened>(ev.Event.Data.Span),
             _ => throw new InvalidOperationException()
-        })!;
+        });
         return events;
     }
 
@@ -23,7 +24,6 @@ public class ReservationStream(EventStoreClient client)
         var evData = events.Select(x => x switch
         {
             ReservationMade e => new EventData(Uuid.NewUuid(), nameof(ReservationMade), JsonSerializer.SerializeToUtf8Bytes(e)),
-            _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
         });
         await client.AppendToStreamAsync($"Reservation-{id}", StreamRevision.FromInt64(age), evData);
     }
@@ -32,8 +32,7 @@ public class ReservationStream(EventStoreClient client)
     {
         var evData = events.Select(x => x switch
         {
-            ReservationOpened e => new EventData(Uuid.NewUuid(), nameof(ReservationOpened), JsonSerializer.SerializeToUtf8Bytes(e)),
-            _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
+            ReservationOpened e => new EventData(Uuid.NewUuid(), nameof(ReservationOpened), JsonSerializer.SerializeToUtf8Bytes(e))
         });
         await client.AppendToStreamAsync($"Reservation-{id}", StreamState.NoStream, evData);
     }

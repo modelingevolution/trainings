@@ -28,7 +28,7 @@ namespace JoinEvents
                 
                 await client.CreateContinuousAsync(outputStream, query, true);
             }
-
+            Console.WriteLine("Done");
 
         }
         private static EventStoreProjectionManagementClient CreateClient()

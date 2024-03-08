@@ -15,15 +15,14 @@ namespace TrainTicketReservation.Reservation.Views.StatView
     public class ReservationStatsProjection(EventStoreClient client)
     {
         public readonly ReservationStats View = new ReservationStats();
-        private readonly EventStoreClient _client = client;
-
+        
         public async Task Start()
         {
-            var events = _client.SubscribeToStream("$ce-Reservation", FromStream.Start, true);
-            Task.Factory.StartNew(async () => await Subscribe(events), TaskCreationOptions.LongRunning);
+            var events = client.SubscribeToStream("$ce-Reservation", FromStream.Start, true);
+            await Task.Factory.StartNew(async () => await Subscribe(events), TaskCreationOptions.LongRunning);
         }
 
-        public event Action Changed;
+        public event Action? Changed;
         private async Task Subscribe(EventStoreClient.StreamSubscriptionResult events)
         {
             await foreach (var e in events)
@@ -32,7 +31,7 @@ namespace TrainTicketReservation.Reservation.Views.StatView
                 switch (e.Event.EventType)
                 {
                     case nameof(ReservationMade):
-                        View.Given(aggregateId, JsonSerializer.Deserialize<ReservationMade>(e.Event.Data.Span));
+                        View.Given(aggregateId, JsonSerializer.Deserialize<ReservationMade>(e.Event.Data.Span) ?? throw new Exception("Deserialization failed"));
                         Changed?.Invoke();
                         break;
                     case nameof(ReservationOpened):

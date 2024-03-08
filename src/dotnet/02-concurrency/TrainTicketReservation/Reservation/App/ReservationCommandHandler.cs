@@ -16,7 +16,8 @@ public class ReservationCommandHandler(EventStoreClient client) : ICommandHandle
     public async Task Handle(Guid id, MakeReservation cmd)
     {
         var reservation = await _stream.Get(id);
-        await reservation.Make(cmd.WindowCount, cmd.AisleCount);
+        reservation.Make(cmd.WindowCount, cmd.AisleCount);
+
         await _stream.Append(reservation.Id, reservation.Age, reservation.PendingEvents);
 
     }

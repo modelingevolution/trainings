@@ -6,8 +6,8 @@ namespace TrainTicketReservation.Infrastructure;
 
 public class App : IDisposable, IAsyncDisposable
 {
-    private EventStoreClient _client;
-    private static App _instance;
+    private EventStoreClient? _client;
+    private static App? _instance;
 
     public static App Instance => _instance ??= new App();
 
@@ -37,11 +37,11 @@ public class App : IDisposable, IAsyncDisposable
 
     public void Dispose()
     {
-        _client.Dispose();
+        _client?.Dispose();
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _client.DisposeAsync();
+        if (_client != null) await _client.DisposeAsync();
     }
 }

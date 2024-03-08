@@ -13,14 +13,15 @@ namespace TrainTicketReservation
             try
             {
                 var arg0 = args[0];
+                var name = args[1];
                 switch (arg0)
                 {
                     case "open":
-                        await App.Instance.CreateReservationCommandHandler().Handle(arg0.ToGuid(), new OpenReservation(arg0, int.Parse(args[1]), int.Parse(args[2])));
+                        await App.Instance.CreateReservationCommandHandler().Handle(name.ToGuid(), new OpenReservation(name, int.Parse(args[2]), int.Parse(args[3])));
                         break;
                     case "reserve":
-                        var tt = Enum.Parse<TicketType>(args[1]);
-                        await App.Instance.CreateReservationCommandHandler().Handle(arg0.ToGuid(),
+                        var tt = Enum.Parse<TicketType>(args[2]);
+                        await App.Instance.CreateReservationCommandHandler().Handle(name.ToGuid(),
                             new MakeReservation(tt == TicketType.Window ? 1 : 0, tt == TicketType.Aisle ? 1 : 0));
                         break;
                     case "stats":

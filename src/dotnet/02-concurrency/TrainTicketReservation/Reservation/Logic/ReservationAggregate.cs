@@ -59,7 +59,7 @@ public class ReservationAggregate(Guid _id)
     }
 
 
-    public async Task Make(int windowCount, int aisleCount)
+    public void Make(int windowCount, int aisleCount)
     {
         if (_state.FreeWindowSeats >= windowCount && _state.FreeAisleSeats >= aisleCount)
         {

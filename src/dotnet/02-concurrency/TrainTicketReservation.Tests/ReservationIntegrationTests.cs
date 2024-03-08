@@ -12,6 +12,7 @@ namespace TrainTicketReservation.Tests
         private string TrainReservationNo = "Train_01" + DateTime.Now.ToString();
         private readonly App _app = new();
 
+       
 
         [Fact]
         public async Task MakingReservationForUnavailableSeats_Throws_SeatsUnavailable()
@@ -54,7 +55,7 @@ namespace TrainTicketReservation.Tests
 
         public void Dispose()
         {
-            _app.Dispose();
+            _app?.Dispose();
         }
 
         public async ValueTask DisposeAsync()
