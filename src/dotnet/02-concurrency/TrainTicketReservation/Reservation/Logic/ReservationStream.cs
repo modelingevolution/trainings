@@ -18,7 +18,7 @@ public class ReservationStream(EventStoreClient client)
         return events;
     }
 
-   private static Dictionary<string, Type> _register = new()
+   private static readonly Dictionary<string, Type> _register = new()
    {
        { nameof(ReservationMade), typeof(ReservationMade) }, 
        { nameof(ReservationOpened), typeof(ReservationOpened) }
