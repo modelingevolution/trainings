@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "JoinEvents": {
+      "commandName": "Project",
+      "commandLineArgs": "ReservationOpened ReservationMade -i Reservations"
+    }
+  }
+}
