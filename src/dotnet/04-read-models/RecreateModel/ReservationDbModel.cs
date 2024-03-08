@@ -99,10 +99,10 @@ namespace RecreateModel
                 switch (e.Event.EventType)
                 {
                     case nameof(ReservationMade):
-                        await db.Given(aggregateId, JsonSerializer.Deserialize<ReservationMade>(e.Event.Data.Span));
+                        await db.Given(aggregateId, JsonSerializer.Deserialize<ReservationMade>(e.Event.Data.Span)!);
                         break;
                     case nameof(ReservationOpened):
-                        await db.Given(aggregateId, JsonSerializer.Deserialize<ReservationOpened>(e.Event.Data.Span));
+                        await db.Given(aggregateId, JsonSerializer.Deserialize<ReservationOpened>(e.Event.Data.Span)!);
                         break;
                     default: break;
                 }
@@ -120,6 +120,6 @@ namespace RecreateModel
         public int TotalSeatsCount { get; set; }
         
         [MaxLength(255)]
-        public string ReservationName { get; set; }
+        public string? ReservationName { get; set; }
     }
 }

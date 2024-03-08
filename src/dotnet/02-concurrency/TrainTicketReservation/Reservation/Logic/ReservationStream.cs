@@ -18,25 +18,31 @@ public class ReservationStream(EventStoreClient client)
         return events;
     }
 
-    public async Task Append(Guid id, long age, IEnumerable<IEvent> events)
-    {
-        var evData = events.Select(x => x switch
-        {
-            ReservationMade e => new EventData(Uuid.NewUuid(), nameof(ReservationMade), JsonSerializer.SerializeToUtf8Bytes(e)),
-            _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
-        });
-        await client.AppendToStreamAsync($"Reservation-{id}", StreamRevision.FromInt64(age), evData);
-    }
+   private static Dictionary<string, Type> _register = new()
+   {
+       { nameof(ReservationMade), typeof(ReservationMade) }, 
+       { nameof(ReservationOpened), typeof(ReservationOpened) }
+   };
+   public IAsyncEnumerable<IEvent> ReadEvents_Reflection(Guid id)
+   {
+       var items = client.ReadStreamAsync(Direction.Forwards, $"Reservation-{id}", StreamPosition.Start);
+       var events = items.Select(ev => JsonSerializer.Deserialize(ev.Event.Data.Span, _register[ev.Event.EventType]) as IEvent);
+       return events;
+   }
 
-    public async Task New(Guid id, IEnumerable<IEvent> events)
-    {
-        var evData = events.Select(x => x switch
-        {
-            ReservationOpened e => new EventData(Uuid.NewUuid(), nameof(ReservationOpened), JsonSerializer.SerializeToUtf8Bytes(e)),
-            _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
-        });
-        await client.AppendToStreamAsync($"Reservation-{id}", StreamState.NoStream, evData);
-    }
+    public async Task Append(Guid id, long age, IEnumerable<IEvent> events)
+   {
+       var evData = events.Select(x => new EventData(Uuid.NewUuid(), x.GetType().Name, JsonSerializer.SerializeToUtf8Bytes(x)));
+
+       await client.AppendToStreamAsync($"Reservation-{id}", StreamRevision.FromInt64(age), evData);
+   }
+
+   public async Task New(Guid id, IEnumerable<IEvent> events)
+   {
+       var evData = events.Select(x => new EventData(Uuid.NewUuid(), x.GetType().Name, JsonSerializer.SerializeToUtf8Bytes(x)));
+
+       await client.AppendToStreamAsync($"Reservation-{id}", StreamState.NoStream, evData);
+   }
 
 
 }
