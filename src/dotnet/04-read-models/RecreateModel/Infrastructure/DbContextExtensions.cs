@@ -19,7 +19,9 @@ public static class DbContextExtensions
         command.Parameters.Add(parameter);
 
         // Ensure the connection is open
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
         if (command.Connection.State != System.Data.ConnectionState.Open) 
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             await command.Connection.OpenAsync();
 
         // Execute the command and convert the result
@@ -32,15 +34,14 @@ public static class DbContextExtensions
         await context.Database.EnsureCreatedAsync();
         foreach (var t in context.Model.GetRelationalModel().Tables)
         {
-            if (!await context.TableExistsAsync(t.Name))
-            {
-                var script = context.Database.GenerateCreateScript().Split("GO");
-                await using var tr = await context.Database.BeginTransactionAsync();
-                foreach(var i in script)
-                    await context.Database.ExecuteSqlRawAsync(i);
-                await tr.CommitAsync();
-                return true;
-            }
+            if (await context.TableExistsAsync(t.Name)) continue;
+
+            var script = context.Database.GenerateCreateScript().Split("GO");
+            await using var tr = await context.Database.BeginTransactionAsync();
+            foreach(var i in script)
+                await context.Database.ExecuteSqlRawAsync(i);
+            await tr.CommitAsync();
+            return true;
         }
 
         return false;
