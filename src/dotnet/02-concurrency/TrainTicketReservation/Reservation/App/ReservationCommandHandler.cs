@@ -22,3 +22,18 @@ public class ReservationCommandHandler(EventStoreClient client) : ICommandHandle
 
     }
 }
+public class ReservationCommandHandler2(EventStoreClient client) : ICommandHandle<OpenReservation>, ICommandHandle<MakeReservation>
+{
+    public async Task Handle(Guid id, OpenReservation cmd)
+    {
+        var reservation = ReservationAggregate2.Open(id, cmd.Name, cmd.WindowCount, cmd.AisleCount);
+        await client.SaveNew(reservation);
+    }
+    public async Task Handle(Guid id, MakeReservation cmd)
+    {
+        var reservation = await client.Get<ReservationAggregate2>(id);
+        reservation.Make(cmd.WindowCount, cmd.AisleCount);
+        await client.SaveChanges(reservation);
+
+    }
+}

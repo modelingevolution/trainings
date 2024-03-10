@@ -17,7 +17,12 @@ public class App : IDisposable, IAsyncDisposable
 
         return new ReservationCommandHandler(_client);
     }
+    public ReservationCommandHandler2 CreateReservationCommandHandler2()
+    {
+        _client ??= CreateClient();
 
+        return new ReservationCommandHandler2(_client);
+    }
     public ReservationStatsProjection CreateReservationStatsEventHandler()
     {
         _client ??= CreateClient();
@@ -25,7 +30,7 @@ public class App : IDisposable, IAsyncDisposable
         return new ReservationStatsProjection(_client);
     }
 
-    private static EventStoreClient CreateClient()
+    public static EventStoreClient CreateClient()
     {
         const string connectionString = "esdb://admin:changeit@localhost:2113?tls=false&tlsVerifyCert=false";
 
