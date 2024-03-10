@@ -50,7 +50,7 @@ namespace TrainTicketReservation
 
                     case "stats2":
                         await App.CreateClient()
-                            .SubscribeToStream("$ce-Reservation", FromStream.Start, true)
+                            .SubscribeToStream("$ce-ReservationAggregate2", FromStream.Start, true)
                             .WithModel(new ReservationStats2());
                         break;
                 }

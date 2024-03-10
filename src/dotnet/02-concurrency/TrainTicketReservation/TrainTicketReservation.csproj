@@ -12,6 +12,6 @@
     <PackageReference Include="EventStore.Client.Grpc.Streams" Version="23.2.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SourceGenerator\SourceGenerator.csproj"  OutputItemType="Analyzer" ReferenceOutputAssembly="true"/>
+    <ProjectReference Include="..\SourceGenerator\SourceGenerator.csproj"  OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
   </ItemGroup>
 </Project>

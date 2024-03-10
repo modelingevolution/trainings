@@ -2,7 +2,7 @@
   "profiles": {
     "TrainTicketReservation": {
       "commandName": "Project",
-      "commandLineArgs": "stats -i"
+      "commandLineArgs": "stats2 -i"
     }
   }
 }

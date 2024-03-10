@@ -45,7 +45,7 @@ namespace SourceGenerator
                         var methods = classDecl.Members.OfType<MethodDeclarationSyntax>()
                             .Where(m => m.Identifier.ValueText == "Given" &&
                                         m.ParameterList.Parameters.Count == 2 &&
-                                        m.ParameterList.Parameters[0].Type.ToString() == "Guid" &&
+                                        m.ParameterList.Parameters[0].Type.ToString() == "Metadata" &&
                                         m.Modifiers.Any(SyntaxKind.PrivateKeyword))
                             .ToList();
 
@@ -63,9 +63,9 @@ namespace SourceGenerator
                             sb.AppendLine($"namespace {namespaceName};");
                         }
 
-                        sb.AppendLine($"partial class {className} : IModel<{className}>");
+                        sb.AppendLine($"partial class {className} : IReadModel<{className}>");
                         sb.AppendLine("{");
-                        sb.AppendLine("    public async Task Given(Guid id, object ev)");
+                        sb.AppendLine("    public async Task Given(Metadata m, object ev)");
                         sb.AppendLine("    {");
                         sb.AppendLine("        switch (ev)");
                         sb.AppendLine("        {");
@@ -73,11 +73,11 @@ namespace SourceGenerator
                         foreach (var method in methods)
                         {
                             var eventType = method.ParameterList.Parameters[1].Type.ToString();
-                            sb.AppendLine($"            case {eventType} e: await Given(id, e); break;");
+                            sb.AppendLine($"            case {eventType} e: await Given(m, e); break;");
                         }
 
                         sb.AppendLine("            default:");
-                        sb.AppendLine("                throw new ArgumentException(\"Unknown event type\", nameof(ev));");
+                        sb.AppendLine("                throw new ArgumentException(\"Unknown event type\", ev.GetType().Name);");
                         sb.AppendLine("        }");
                         sb.AppendLine("    }");
               
@@ -93,7 +93,7 @@ namespace SourceGenerator
                         }
                         sb.AppendLine("    };");
 
-                        sb.AppendLine($"    static IDictionary<string, Type> IModel<{className}>.TypeRegister => _register;");
+                        sb.AppendLine($"    static IDictionary<string, Type> IReadModel<{className}>.TypeRegister => _register;");
                         
                         sb.AppendLine("}");
                         context.AddSource($"{className}_EventHandler.cs", SourceText.From(sb.ToString(), Encoding.UTF8));

@@ -6,13 +6,13 @@ namespace TrainTicketReservation.Reservation.Logic;
 
 public class ReservationStream(EventStoreClient client)
 {
-   public IAsyncEnumerable<IEvent> ReadEvents(Guid id)
+   public IAsyncEnumerable<object> ReadEvents(Guid id)
     {
         var items = client.ReadStreamAsync(Direction.Forwards, $"Reservation-{id}", StreamPosition.Start);
-        IAsyncEnumerable<IEvent> events = items.Select(ev => ev.Event.EventType switch
+        IAsyncEnumerable<object> events = items.Select(ev => ev.Event.EventType switch
         {
             nameof(ReservationMade) => JsonSerializer.Deserialize<ReservationMade>(ev.Event.Data.Span),
-            nameof(ReservationOpened) => (IEvent)JsonSerializer.Deserialize<ReservationOpened>(ev.Event.Data.Span)!,
+            nameof(ReservationOpened) => (object)JsonSerializer.Deserialize<ReservationOpened>(ev.Event.Data.Span)!,
             _ => throw new InvalidOperationException()
         })!;
         return events;
@@ -23,21 +23,21 @@ public class ReservationStream(EventStoreClient client)
        { nameof(ReservationMade), typeof(ReservationMade) }, 
        { nameof(ReservationOpened), typeof(ReservationOpened) }
    };
-   public IAsyncEnumerable<IEvent> ReadEvents_Reflection(Guid id)
+   public IAsyncEnumerable<object> ReadEvents_Reflection(Guid id)
    {
        var items = client.ReadStreamAsync(Direction.Forwards, $"Reservation-{id}", StreamPosition.Start);
-       var events = items.Select(ev => (IEvent)JsonSerializer.Deserialize(ev.Event.Data.Span, _register[ev.Event.EventType])!);
+       var events = items.Select(ev => (object)JsonSerializer.Deserialize(ev.Event.Data.Span, _register[ev.Event.EventType])!);
        return events;
    }
 
-    public async Task Append(Guid id, long age, IEnumerable<IEvent> events)
+    public async Task Append(Guid id, long age, IEnumerable<object> events)
    {
        var evData = events.Select(x => new EventData(Uuid.NewUuid(), x.GetType().Name, JsonSerializer.SerializeToUtf8Bytes(x)));
 
        await client.AppendToStreamAsync($"Reservation-{id}", StreamRevision.FromInt64(age), evData);
    }
 
-   public async Task New(Guid id, IEnumerable<IEvent> events)
+   public async Task New(Guid id, IEnumerable<object> events)
    {
        var evData = events.Select(x => new EventData(Uuid.NewUuid(), x.GetType().Name, JsonSerializer.SerializeToUtf8Bytes(x)));
 

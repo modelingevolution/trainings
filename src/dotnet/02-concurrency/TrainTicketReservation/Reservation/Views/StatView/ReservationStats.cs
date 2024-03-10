@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -33,7 +34,9 @@ public class ReservationStatsProjection(EventStoreClient client)
             switch (e.Event.EventType)
             {
                 case nameof(ReservationMade):
-                    View.Given(aggregateId, JsonSerializer.Deserialize<ReservationMade>(e.Event.Data.Span) ?? throw new Exception("Deserialization failed"));
+                    View.Given(new Metadata(aggregateId, 
+                        Serializer.Instance.Parse(e.Event.Metadata.Span)), 
+                        JsonSerializer.Deserialize<ReservationMade>(e.Event.Data.Span) ?? throw new Exception("Deserialization failed"));
                     Changed?.Invoke();
                     break;
                 case nameof(ReservationOpened):
@@ -72,17 +75,17 @@ public class ReservationStats
     public IReadOnlySet<TimeBucket> Items => _index;
 
         
-    public void Given(Guid id, IEvent ev)
+    public void Given(Metadata m, object ev)
     {
         switch (ev)
         {
-            case ReservationMade e: Given(id, e);
+            case ReservationMade e: Given(m, e);
                 break;
         }
     }
         
 
-    private void Given(Guid id, ReservationMade ev)
+    private void Given(Metadata m, ReservationMade ev)
     {
         TimeBucket n = ev.When.Date.AddHours(ev.When.TimeOfDay.Hours);
 
@@ -90,5 +93,6 @@ public class ReservationStats
             _index.Add(b = n);
 
         b.Reserved += ev.AisleCount + ev.WindowCount;
+        
     }
 }

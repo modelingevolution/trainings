@@ -2,7 +2,7 @@
 using TrainTicketReservation.Reservation.App;
 using TrainTicketReservation.Reservation.Views.StatView;
 
-namespace TrainTicketReservation.Infrastructure;
+namespace TrainTicketReservation;
 
 public class App : IDisposable, IAsyncDisposable
 {

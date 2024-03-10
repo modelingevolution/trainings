@@ -4,7 +4,7 @@ using TrainTicketReservation.Reservation.Logic;
 
 namespace TrainTicketReservation.Reservation.App;
 
-public class ReservationCommandHandler(EventStoreClient client) : ICommandHandle<OpenReservation>, ICommandHandle<MakeReservation>
+public class ReservationCommandHandler(EventStoreClient client) 
 {
     private readonly ReservationStream _stream = new(client);
     public async Task Handle(Guid id, OpenReservation cmd)
@@ -22,12 +22,12 @@ public class ReservationCommandHandler(EventStoreClient client) : ICommandHandle
 
     }
 }
-public class ReservationCommandHandler2(EventStoreClient client) : ICommandHandle<OpenReservation>, ICommandHandle<MakeReservation>
+public class ReservationCommandHandler2(EventStoreClient client)
 {
     public async Task Handle(Guid id, OpenReservation cmd)
     {
         var reservation = ReservationAggregate2.Open(id, cmd.Name, cmd.WindowCount, cmd.AisleCount);
-        await client.SaveNew(reservation);
+        await client.SaveNew(reservation, (aggregate,ev) => new { Created=DateTime.Now});
     }
     public async Task Handle(Guid id, MakeReservation cmd)
     {

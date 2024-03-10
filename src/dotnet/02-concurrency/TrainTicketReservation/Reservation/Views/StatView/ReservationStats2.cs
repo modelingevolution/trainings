@@ -10,7 +10,7 @@ public partial class ReservationStats2
 {
     private readonly SortedSet<TimeBucket> _index = new();
     public IReadOnlySet<TimeBucket> Items => _index;
-    private async Task Given(Guid id, ReservationMade ev)
+    private async Task Given(Metadata m, ReservationMade ev)
     {
         TimeBucket n = ev.When.Date.AddHours(ev.When.TimeOfDay.Hours);
 
@@ -20,8 +20,8 @@ public partial class ReservationStats2
         b.Reserved += ev.AisleCount + ev.WindowCount;
     }
 
-    private async Task Given(Guid id, ReservationOpened ev)
+    private async Task Given(Metadata m, ReservationOpened ev)
     {
-
+        Console.WriteLine($"{m.Id}: {m.Created()}");
     }
 }
