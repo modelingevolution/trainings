@@ -11,7 +11,7 @@ public interface IObjectSerializer
 {
     object? Deserialize(ReadOnlySpan<byte> span, Type t);
     JsonElement Parse(ReadOnlySpan<byte> span);
-    byte[] SerializeToUtf8Bytes(object t);
+    byte[] SerializeToUtf8Bytes(object? t);
 }
 class ObjectSerializer : IObjectSerializer
 {
@@ -28,7 +28,7 @@ class ObjectSerializer : IObjectSerializer
         return JsonSerializer.Deserialize<JsonElement>(span, Options);
     }
 
-    public byte[] SerializeToUtf8Bytes(object t)
+    public byte[] SerializeToUtf8Bytes(object? t)
     {
         return t == null ? Array.Empty<byte>() : JsonSerializer.SerializeToUtf8Bytes(t, t.GetType(), Options);
     }
