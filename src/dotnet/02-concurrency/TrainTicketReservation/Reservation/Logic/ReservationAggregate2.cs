@@ -11,7 +11,7 @@ public partial class ReservationAggregate2(Guid id) : AggregateBase<ReservationA
     public static ReservationAggregate2 Open(Guid id, string name, int w, int a)
     {
         ReservationAggregate2 result = new ReservationAggregate2(id);
-        result._pendingEvents.Add(new ReservationOpened(name, w, a));
+        result.AppendEvent(new ReservationOpened(name, w, a));
         return result;
     }
 
@@ -36,11 +36,10 @@ public partial class ReservationAggregate2(Guid id) : AggregateBase<ReservationA
 
     public void Make(int windowCount, int aisleCount)
     {
-        if (_state.FreeWindowSeats >= windowCount && _state.FreeAisleSeats >= aisleCount)
+        if (State.FreeWindowSeats >= windowCount && State.FreeAisleSeats >= aisleCount)
         {
             var ev = new ReservationMade(windowCount, aisleCount);
-            _pendingEvents.Add(ev);
-            Apply(ev);
+            AppendEvent(ev);
         }
         else throw new SeatsUnavailable();
     }

@@ -4,8 +4,15 @@ public abstract class AggregateBase<TState>(Guid id)
     where TState : new()
 
 {
-    protected readonly List<object> _pendingEvents = new();
-    protected TState _state = new();
+    private readonly List<object> _pendingEvents = new();
+    protected void AppendEvent(object ev)
+    {
+        _pendingEvents.Add(ev);
+        Apply(ev);
+    }
+
+    private TState _state = new();
+    protected TState State => _state;
     private long _age = -1;
     public Guid Id => id;
     public long Age => _age;
@@ -14,10 +21,11 @@ public abstract class AggregateBase<TState>(Guid id)
     {
         await foreach (var e in events)
         {
-            Apply(e);
+            _state = Apply(e);
             _age += 1;
         }
     }
 
-    protected abstract void Apply(object ev);
+    protected abstract TState Given(TState state, object ev);
+    private TState Apply(object ev) => Given(_state, ev);
 }

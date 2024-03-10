@@ -35,6 +35,16 @@ namespace SourceGenerator
                     var classSymbol = semanticModel.GetDeclaredSymbol(classDecl);
                     if (classSymbol == null) continue;
 
+
+                    var baseType = classDecl.BaseList?.Types
+                        .Select(bt => bt.Type)
+                        .OfType<GenericNameSyntax>()
+                        .FirstOrDefault(gn => gn.Identifier.ValueText.Contains("AggregateBase"));
+
+                    if (baseType == null) continue;
+                    var stateClassName = baseType.TypeArgumentList.Arguments.FirstOrDefault();
+                    if (stateClassName == null) continue;
+
                     if (classSymbol.GetAttributes().Any(ad => ad.AttributeClass.Name == "AggregateAttribute" || ad.AttributeClass.Name == "Aggregate"))
                     {
                         var namespaceDecl = classDecl.Parent as NamespaceDeclarationSyntax;
@@ -44,6 +54,7 @@ namespace SourceGenerator
                         var methods = classDecl.Members.OfType<MethodDeclarationSyntax>()
                             .Where(m => m.Identifier.ValueText == "Given" &&
                                         m.ParameterList.Parameters.Count == 2 &&
+                                        m.ParameterList.Parameters[1].Type.ToString() != "object" &&
                                         m.Modifiers.Any(SyntaxKind.PrivateKeyword))
                             .ToList();
 
@@ -63,18 +74,18 @@ namespace SourceGenerator
 
                         sb.AppendLine($"partial class {className} : IAggregate<{className}> ");
                         sb.AppendLine("{");
-                        sb.AppendLine("    protected override void Apply(object ev)");
+                        sb.AppendLine($"    protected override {stateClassName} Given({stateClassName} state, object ev)");
                         sb.AppendLine("    {");
-                        sb.AppendLine("        _state = ev switch");
+                        sb.AppendLine("        switch(ev)");
                         sb.AppendLine("        {");
 
                         foreach (var method in methods)
                         {
                             var eventType = method.ParameterList.Parameters[1].Type.ToString();
-                            sb.AppendLine($"            {eventType} e => Given(_state, e),");
+                            sb.AppendLine($"            case {eventType} e: return Given(state, e);");
                         }
 
-                        sb.AppendLine("            _ => _state");
+                        sb.AppendLine("            default: return state;");
                         
                         sb.AppendLine("        };");
                         sb.AppendLine("    }");
