@@ -18,10 +18,11 @@ public partial class ReservationStats2
             _index.Add(b = n);
 
         b.Reserved += ev.AisleCount + ev.WindowCount;
+        await Task.Delay(0);
     }
 
     private async Task Given(Metadata m, ReservationOpened ev)
     {
-        Console.WriteLine($"{m.Id}: {m.Created()}");
+        await Task.Delay(0);
     }
 }
