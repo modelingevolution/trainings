@@ -18,7 +18,7 @@ namespace RecreateModel
         public DbSet<Reservation> Reservations { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer($"Server=.\\;Database=CQRS_04;Trusted_Connection=True;TrustServerCertificate=True;Pooling=true;Max Pool Size=100;");
+            optionsBuilder.UseSqlServer($"Server=localhost,5434;Database=EX_04;User Id=SA;Password=Pass@word;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
